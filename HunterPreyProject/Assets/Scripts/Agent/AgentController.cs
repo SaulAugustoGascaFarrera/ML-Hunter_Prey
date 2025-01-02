@@ -15,18 +15,9 @@ public class AgentController : Agent
 
     public override void OnEpisodeBegin()
     {
-        transform.localPosition = new Vector3(0.0f,0.5f,0.0f);
+        transform.localPosition = new Vector3(Random.Range(-8.0f,9.0f),0.5f,Random.Range(-8.0f,9.0f));
 
-        int randomPos = Random.Range(0,2);
-
-        if(randomPos == 0)
-        {
-            targetTransform.localPosition = new Vector3(-4,0.6f,0.0f);
-        }
-        else if (randomPos == 1)
-        {
-            targetTransform.localPosition = new Vector3(4, 0.6f, 0.0f);
-        }
+        targetTransform.localPosition = new Vector3(Random.Range(-8.0f, 9.0f), 0.5f, Random.Range(-8.0f, 9.0f));
     }
 
 
@@ -39,11 +30,14 @@ public class AgentController : Agent
 
     public override void OnActionReceived(ActionBuffers actions)
     {
-        float move = actions.ContinuousActions[0];
+        float moveX = actions.ContinuousActions[0];
+        float moveZ = actions.ContinuousActions[1];
 
-        
+        Vector3 movementDirection = new Vector3(moveX, 0.0f, moveZ);
 
-        transform.position += new Vector3(move, 0.0f, 0.0f) * movemetSpeed * Time.deltaTime;
+        movementDirection = movementDirection.normalized;
+
+        transform.position += movementDirection * movemetSpeed * Time.deltaTime;
     }
 
 
@@ -51,6 +45,7 @@ public class AgentController : Agent
     {
         ActionSegment<float> continiuousAction = actionsOut.ContinuousActions;
         continiuousAction[0] = Input.GetAxisRaw("Horizontal");
+        continiuousAction[1] = Input.GetAxisRaw("Vertical");
     }
 
     private void OnTriggerEnter(Collider other)
